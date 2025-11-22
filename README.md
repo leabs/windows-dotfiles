@@ -2,9 +2,9 @@
 
 A small, Windows-friendly dotfiles set tuned for Git + PowerShell. Use it as-is or as a starting point for your own setup.
 
-## What’s here
-- `.gitconfig`: sensible Git defaults (LF by default, VS Code as editor, prune on fetch, rerere, aliases, etc.).
-- `.gitignore_global`: global ignores for OS cruft, editor artifacts, logs, and `node_modules/`.
+## What's here
+- `.gitconfig`: sensible Git defaults (LF by default, VS Code as editor, prune on fetch, rerere, aliases, etc.) with placeholders; includes `~/.gitconfig.local` for your real name/email.
+- `.gitignore_global`: global ignores for OS cruft, editor artifacts, logs, and `node_modules/` (also ignores `.gitconfig.local`).
 - `.gitattributes`: normalizes line endings (LF default; CRLF for PowerShell/CMD scripts) and marks binaries/lockfiles.
 - `.editorconfig`: consistent whitespace/newlines (LF, final newline, trim trailing space; 4-space default, 2-space for JSON/YAML/MD).
 - `Microsoft.PowerShell_profile.ps1`: PSReadLine tweaks, optional posh-git prompt, git helpers, PATH refresh, handy aliases.
@@ -24,14 +24,24 @@ Copy-Item .gitattributes $HOME\.gitattributes -Force
 Copy-Item .editorconfig $HOME\.editorconfig -Force
 ```
 
-3) Install the PowerShell profile:
+3) Add your actual Git identity in the local override (keeps personal info out of the repo):
+```pwsh
+@'
+[user]
+  name = Your Name
+  email = you@example.com
+  username = your_github
+'@ | Set-Content -Path $HOME\.gitconfig.local -Encoding UTF8
+```
+
+4) Install the PowerShell profile:
 ```pwsh
 $profileDir = Split-Path $PROFILE
 New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
 Copy-Item Microsoft.PowerShell_profile.ps1 $PROFILE -Force
 ```
 
-4) (Optional) Symlink instead of copy to keep updates in sync:
+5) (Optional) Symlink instead of copy to keep updates in sync:
 ```pwsh
 New-Item -ItemType SymbolicLink -Path $HOME\.gitconfig -Target (Resolve-Path .gitconfig) -Force
 New-Item -ItemType SymbolicLink -Path $HOME\.gitignore_global -Target (Resolve-Path .gitignore_global) -Force
@@ -40,7 +50,7 @@ New-Item -ItemType SymbolicLink -Path $HOME\.editorconfig -Target (Resolve-Path 
 New-Item -ItemType SymbolicLink -Path $PROFILE -Target (Resolve-Path Microsoft.PowerShell_profile.ps1) -Force
 ```
 
-5) (Optional) Install `posh-git` for a richer prompt:
+6) (Optional) Install `posh-git` for a richer prompt:
 ```pwsh
 Install-Module posh-git -Scope CurrentUser
 ```

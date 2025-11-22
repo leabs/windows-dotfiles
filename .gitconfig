@@ -5,10 +5,12 @@
 	required = true
 
 [user]
-	name = Steven Leabo
-	email = stevenleabo@gmail.com
-	username = leabs      # optional; helps others know your GitHub handle
+	name = YOUR_NAME
+	email = YOUR_EMAIL
+	username = YOUR_GITHUB      # optional; helps others know your GitHub handle
 
+[include]
+	path = ~/.gitconfig.local
 
 [core]
 	editor = code --wait
