@@ -1,0 +1,6 @@
+# Rename to `.zshrc.local`
+# Never commit `.zshrc.local` to Git
+
+export OPENAI_API_KEY="sk-xxx"
+export AWS_ACCESS_KEY_ID="xxx"
+export AWS_SECRET_ACCESS_KEY="xxx"
