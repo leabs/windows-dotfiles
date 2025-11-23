@@ -1,55 +1,73 @@
-﻿# Dotfiles for Windows
+# Dotfiles by OS
 
-A small, Windows-friendly dotfiles set tuned for Git + PowerShell. Use it as-is or as a starting point for your own setup.
+Clone this repo and point your config files at it so you can `git pull` and keep getting updates, instead of copy/pasting static snippets. Dotfiles are organized per platform so you can install only what you need.
 
-## What's here
-- `.gitconfig`: sensible Git defaults (LF by default, VS Code as editor, prune on fetch, rerere, aliases, etc.) with placeholders; includes `~/.gitconfig.local` for your real name/email.
-- `.gitignore_global`: global ignores for OS cruft, editor artifacts, logs, and `node_modules/` (also ignores `.gitconfig.local`).
-- `.gitattributes`: normalizes line endings (LF default; CRLF for PowerShell/CMD scripts) and marks binaries/lockfiles.
-- `.editorconfig`: consistent whitespace/newlines (LF, final newline, trim trailing space; 4-space default, 2-space for JSON/YAML/MD).
-- `Microsoft.PowerShell_profile.ps1`: PSReadLine tweaks, optional posh-git prompt, git helpers, PATH refresh, handy aliases.
+## Layout
+- `windows/`: Git config, global gitignore, gitattributes, editorconfig, PowerShell profile, and `.gitconfig.local.example`.
+- `linux/`: A lightweight `.bashrc` starter with a few aliases and history tweaks.
+- `macos/`: A lightweight `.zshrc` starter with aliases and Homebrew path loading.
 
-## Get started (PowerShell)
+## Windows setup (PowerShell)
 1) Clone the repo:
 ```pwsh
 git clone https://github.com/steve/dotfiles.git $HOME\dotfiles
 Set-Location $HOME\dotfiles
 ```
 
-2) Copy (or symlink) the dotfiles into place. Copying is simplest:
+2) Symlink the dotfiles from the Windows directory so updates flow automatically:
 ```pwsh
 $home = $env:USERPROFILE
-Copy-Item .gitconfig "$home\.gitconfig" -Force
-Copy-Item .gitconfig.local.example "$home\.gitconfig.local" -Force   # edit this with your info
-Copy-Item .gitignore_global "$home\.gitignore_global" -Force
-Copy-Item .gitattributes "$home\.gitattributes" -Force
-Copy-Item .editorconfig "$home\.editorconfig" -Force
+New-Item -ItemType SymbolicLink -Path $home\.gitconfig -Target (Resolve-Path windows/.gitconfig) -Force
+New-Item -ItemType SymbolicLink -Path $home\.gitconfig.local -Target (Resolve-Path windows/.gitconfig.local.example) -Force   # edit this with your info
+New-Item -ItemType SymbolicLink -Path $home\.gitignore_global -Target (Resolve-Path windows/.gitignore_global) -Force
+New-Item -ItemType SymbolicLink -Path $home\.gitattributes -Target (Resolve-Path windows/.gitattributes) -Force
+New-Item -ItemType SymbolicLink -Path $home\.editorconfig -Target (Resolve-Path windows/.editorconfig) -Force
 ```
 
-3) Add your actual Git identity in the local override (keeps personal info out of the repo):
-Edit `$home\.gitconfig.local` that you just copied.
+If symlinks are blocked (for example, if Developer Mode is off), copy instead:
+```pwsh
+Copy-Item windows/.gitconfig "$home\.gitconfig" -Force
+Copy-Item windows/.gitconfig.local.example "$home\.gitconfig.local" -Force
+Copy-Item windows/.gitignore_global "$home\.gitignore_global" -Force
+Copy-Item windows/.gitattributes "$home\.gitattributes" -Force
+Copy-Item windows/.editorconfig "$home\.editorconfig" -Force
+```
+
+3) Add your actual Git identity in the local override:
+Edit `$home\.gitconfig.local` that you just created.
 
 4) Install the PowerShell profile (it will start new shells in `$env:USERPROFILE\github` if that folder exists):
 ```pwsh
 $profileDir = Split-Path $PROFILE
 New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
 New-Item -ItemType Directory -Path "$env:USERPROFILE\github" -Force | Out-Null
-Copy-Item Microsoft.PowerShell_profile.ps1 $PROFILE -Force
+Copy-Item windows/Microsoft.PowerShell_profile.ps1 $PROFILE -Force
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned   # allows the profile to run
 ```
 
-5) (Optional) Symlink instead of copy to keep updates in sync:
-```pwsh
-New-Item -ItemType SymbolicLink -Path $HOME\.gitconfig -Target (Resolve-Path .gitconfig) -Force
-New-Item -ItemType SymbolicLink -Path $HOME\.gitignore_global -Target (Resolve-Path .gitignore_global) -Force
-New-Item -ItemType SymbolicLink -Path $HOME\.gitattributes -Target (Resolve-Path .gitattributes) -Force
-New-Item -ItemType SymbolicLink -Path $HOME\.editorconfig -Target (Resolve-Path .editorconfig) -Force
-New-Item -ItemType SymbolicLink -Path $PROFILE -Target (Resolve-Path Microsoft.PowerShell_profile.ps1) -Force
-```
-
-6) (Optional) Install `posh-git` for a richer prompt:
+5) (Optional) Install `posh-git` for a richer prompt:
 ```pwsh
 Install-Module posh-git -Scope CurrentUser
 ```
 
-After copying/symlinking, open a new PowerShell session and you’re set.
+Keep the repo around and run `git pull` occasionally to grab updates, then open a new PowerShell session.
+
+## Linux setup (Bash)
+1) Clone the repo and change into it.
+2) Symlink the starter Bash profile so updates pull through (copy if you prefer a static file):
+```bash
+ln -sf "$(pwd)/linux/.bashrc" ~/.bashrc
+# or: cp linux/.bashrc ~/.bashrc
+```
+3) Add any machine-specific tweaks in `~/.bashrc.local` (loaded automatically if it exists).
+4) Keep the repo and run `git pull` occasionally to receive updates.
+
+## macOS setup (Zsh)
+1) Clone the repo and change into it.
+2) Symlink the starter Zsh profile so updates pull through (copy if you prefer a static file):
+```bash
+ln -sf "$(pwd)/macos/.zshrc" ~/.zshrc
+# or: cp macos/.zshrc ~/.zshrc
+```
+3) Add any machine-specific tweaks in `~/.zshrc.local` (loaded automatically if it exists).
+4) Keep the repo and run `git pull` occasionally to receive updates.

@@ -1,4 +1,4 @@
-﻿# Personal PowerShell profile for Windows devs
+# Personal PowerShell profile for Windows devs
 # Symlink/copy this file to $PROFILE (e.g., $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
 
 # Line editing and history
